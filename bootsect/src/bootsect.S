@@ -19,63 +19,43 @@
 * Símbolo que marca el inicio del código del sector de arranque 
 */
 start:
+        /* Configurar CS para que apunte a 0x7C00 */
+  ljmp 0x7C0: offset entry_point
+  
+entry_point:
 
-	/*Escribir Bienvenidos*/
-	
-	/* 'B' */
+  /* Configurar el registro de segmento DS */
+  mov ax, cs
+  mov ds, ax
+
+  /* Configurar la pila */
+  cli
+  mov ax, 0x9000
+  mov ss, ax
+  mov sp, 0xFC00
+  sti
+  
+  
+	/*Escribir Hola*/
+	/* 'H' */
 	mov ah, 0x0e /* int 0x10, ah = 0x0E Write text in teletype mode*/
-	mov al, 'B' /* Caracter ASCII a imprimir */
+	mov al, 'H' /* Caracter ASCII a imprimir */
 	mov bh, 0x00 /* Primera página, modo texto */
 	mov bl, 0x00 /* Ignorado, se usa en modo gráfico */
 	int 0x10 /* Invocar el servicio! */
 
-	/* 'i' */
-	mov ax, 0x0e69 /* ah = 0x0E, al = 0x69 = 'i' */
+	/* 'o' */
+	mov ax, 0x0e6f /* ah = 0x0E, al = 0x69 = '0' */
 	mov bx, 0x0000 /* bh = 0x00, bl = 0x00 */
 	int 0x10
 
-	/* 'e' */
-	mov ax, 0x0e65 /* ah = 0x0E, al = 0x65 = 'e' */
-	xor bx, bx /* Equivalente a mov bx, 0x000 */
-	int 0x10
-
-	/* 'n' */
-	mov ax, 0x0e6e /* ah = 0x0E, al = 0x6e = 'n' */
-	xor bx, bx /* Equivalente a mov bx, 0x000 */
-	int 0x10
-
-	/* 'v' */
-	mov ax, 0x0e76 /* ah = 0x0E, al = 0x76 = 'v' */
-	xor bx, bx /* Equivalente a mov bx, 0x000 */
-	int 0x10
-	
-	/* 'e' */
-	mov ax, 0x0e65 /* ah = 0x0E, al = 0x65 = 'e' */
-	xor bx, bx /* Equivalente a mov bx, 0x000 */
-	int 0x10
-	
-	/* 'n' */
-	mov ax, 0x0e6e /* ah = 0x0E, al = 0x6e = 'n' */
-	xor bx, bx /* Equivalente a mov bx, 0x000 */
-	int 0x10
-	
-	/* 'i' */
-	mov ax, 0x0e69 /* ah = 0x0E, al = 0x69 = 'i' */
-	xor bx, bx /* bh = 0x00, bl = 0x00 */
-	int 0x10
-	
-	/* 'd' */  
-	mov ax, 0x0e64 /* ah = 0x0E, al = 0x64 = 'd' */
+        /* l */
+	mov ax, 0x0e6c
 	xor bx, bx
 	int 0x10
 	
-	/* 'o' */
-	mov ax, 0x0e6f  /* ah = 0x0E, al = 0x6f = 'o' */
-	xor bx, bx
-	int 0x10
-	
-	/* 's' */
-	mov ax, 0x0e73 /* ah = 0x0E, al = 0x73 = 's' */
+	/* a */
+	mov ax, 0x0e61
 	mov bx, 0x0000
 	int 0x10
 	
@@ -191,12 +171,10 @@ cls:
 	xor bx, bx
 	int 0x10
 	
-	/* Saltar linea */
-	mov ah, 0x02 
-	xor bh, bh /* Página 0 */
-	mov dh, 1
-	mov dl, 0
-	int 0x10 /* int 0x10, ah = 0x02 Set cursor position */
+	/*  */
+	mov ax, 0x0E20
+	xor bx, bx
+	int 0x10
 	
 	/* e */
 	mov ax, 0x0E65
@@ -285,82 +263,41 @@ cls:
 	
 	/* : */
 	mov ax, 0x0E3A
-	xor bx, bx
+	mov bx, 0x0000
 	int 0x10
-	/*Pedir valores y limpiar*/
+	
+	
+	call getkey
+	call getkey
 	
 	/* Esperar una pulsación de tecla */
 	xor ax, ax /* ax = 0x0000 */
 	int 0x16 /* int 0x16, ah = 0x00 Wait for keystroke and read */
 	
-	/* Mover el cursor al inicio de la pantalla */
-	mov ah, 0x02 
-	xor bh, bh /* Página 0 */
-	xor dx, dx  /* dh (fila) = 0, dl (columna) = 0 */
-	int 0x10 /* int 0x10, ah = 0x02 Set cursor position */
-
-	/* Limpiar la pantalla: Escribir 80 x 25 = 2000 espacios desde la esquina
-	 * superior izquierda hasta la esquina inferior derecha */
-	mov cx, 2000
-mnl:
-	mov ax, 0x0E20 /* AH = 0x0E, AL = 0x20 = ' ' */
-	xor bx, bx /* Página 0 */
+	/* Salto de linea */
+	mov ah, 0x0E
+	mov al, 0x0D
 	int 0x10
-	loop mnl /* Loop: Decrementar cx y saltar a 'cls' mientras cx > 0*/
-
-	/* Mover de nuevo el cursor al inicio de la pantalla */
-	mov ah, 0x02 
-	xor bh, bh /* Página 0 */
-	xor dx, dx  /* dh (fila) = 0, dl (columna) = 0 */
-	int 0x10 /* int 0x10, ah = 0x02 Set cursor position */
-	
-	
-	/* Imprimir: Ingrese un caracter(c, t): */
-	
-      
-	
-        /* I */
-	mov ax, 0x0E49
-	xor bx, bx
-	int 0x10
-	
-	/* n */
-	mov ax, 0x0E6E
-	xor bx, bx
-	int 0x10
-	
-	/*g*/
-	mov ax, 0x0E67
-	xor bx, bx
+	mov al, 0x0A
 	int 0x10
 	
 	
-	/* r */
-	mov ax, 0x0E72
-	xor bx, bx
-	int 0x10
+	/* Imprimir: Un caracter(c,t): */
 	
-	/* e */
-	mov ax, 0x0E65
-	xor bx, bx
-	int 0x10
-	
-	/* s */
-	mov ax, 0x0E73
-	xor bx, bx
-	int 0x10
-	
-	/* e */
-	mov ax, 0x0E65
-	xor bx, bx
-	int 0x10
+	/* U */
+        mov ax, 0x0e55
+        xor bx, bx
+        int 0x10
+        
+        /* n */
+        mov ax, 0x0e6e
+        xor bx, bx
+        int 0x10
 		
-	/* Saltar linea */
-	mov ah, 0x02 
-	xor bh, bh /* Página 0 */
-	mov dh, 1
-	mov dl, 0
-	int 0x10 /* int 0x10, ah = 0x02 Set cursor position */
+	/*  */
+	mov ax, 0x0E20
+	xor bx, bx
+	int 0x10
 	
 	/* c*/
 	mov ax, 0x0E63
@@ -395,7 +332,7 @@ mnl:
 	xor bx, bx
 	int 0x10
 	
-        /* Error */
+	/* Error */
       
 	/* e */
 	mov ax, 0x0E65
@@ -417,10 +354,6 @@ mnl:
 	xor bx, bx
 	int 0x10
 	
-	/*  */
-	mov ax, 0x0E20
-	xor bx, bx
-	int 0x10
 	
 	/* , */
 	mov ax, 0x0E2C
@@ -442,10 +375,8 @@ mnl:
 	xor bx, bx
 	int 0x10
 	
-	
-	
-	
 	/*
+	
 	
 	Recibir el caracter
 	
@@ -463,3 +394,17 @@ finished:
 
  jmp finished
 
+/**
+* Lee un caracter de teclado usando los servicios de teclado de la BIOS
+* (int 0x16).
+* Entrada:
+*  Ninguna
+* Salida:
+*  AL contiene el caracter ASCII leido
+* En esta rutina no se crea un marco de pila. El servicio de la 
+* BIOS puede modificar otros registros.
+*/
+getkey: 
+  xor ah, ah   /* ah = 0, servico de video leer un caracter de teclado */
+  int 0x16     /* Servicio de video */
+  ret
