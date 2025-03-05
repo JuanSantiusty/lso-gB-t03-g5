@@ -27,6 +27,7 @@ entry_point:
   /* Configurar el registro de segmento DS */
   mov ax, cs
   mov ds, ax
+  mov es, ax
 
   /* Configurar la pila */
   cli
@@ -84,196 +85,22 @@ cls:
 	xor dx, dx  /* dh (fila) = 0, dl (columna) = 0 */
 	int 0x10 /* int 0x10, ah = 0x02 Set cursor position */
 	
-	/* Imprimir: Ingrese 2 valores enteros (1 Digito): */
-	/* I */
-	mov ax, 0x0E49
-	xor bx, bx
-	int 0x10
+	/* Imprimir: Ingrese 2 valores enteros(1 digito) */
+	mov si,offset mensaje1
+	call imprimir
 	
-	/* n */
-	mov ax, 0x0E6E
-	xor bx, bx
-	int 0x10
-	
-	/*g*/
-	mov ax, 0x0E67
-	xor bx, bx
-	int 0x10
-	
-	
-	/* r */
-	mov ax, 0x0E72
-	xor bx, bx
-	int 0x10
-	
-	/* e */
-	mov ax, 0x0E65
-	xor bx, bx
-	int 0x10
-	
-	/* s */
-	mov ax, 0x0E73
-	xor bx, bx
-	int 0x10
-	
-	/* e */
-	mov ax, 0x0E65
-	xor bx, bx
-	int 0x10
-	
-	/*  */
-	mov ax, 0x0E20
-	xor bx, bx
-	int 0x10
-	
-	/* 2 */
-	mov ax, 0x0E32
-	xor bx, bx
-	int 0x10
-	
-	/*  */
-	mov ax, 0x0E20
-	xor bx, bx
-	int 0x10
-	
-	/* v */
-	mov ax, 0x0E76
-	xor bx, bx
-	int 0x10
-	
-	/* a */
-	mov ax, 0x0E61
-	xor bx, bx 
-	int 0x10
-	
-	/* l */
-	mov ax, 0x0E6C
-	xor bx, bx
-	int 0x10
-	
-	/* o */
-	mov ax, 0x0E6F
-	xor bx, bx 
-	int 0x10
-	
-	/* r */
-	mov ax, 0x0E72
-	xor bx, bx
-	int 0x10
-	
-	/* e */
-	mov ax, 0x0E65
-	xor bx, bx
-	int 0x10
-	
-	/* s */
-	mov ax, 0x0E73
-	xor bx, bx
-	int 0x10
-	
-	/*  */
-	mov ax, 0x0E20
-	xor bx, bx
-	int 0x10
-	
-	/* e */
-	mov ax, 0x0E65
-	xor bx, bx
-	int 0x10
-	
-	/* n */
-	mov ax, 0x0E6E
-	xor bx, bx
-	int 0x10
-	
-	/* t */
-	mov ax, 0x0E74
-	xor bx, bx
-	int 0x10
-	
-	/* e */
-	mov ax, 0x0E65
-	xor bx, bx
-	int 0x10
-	
-	/* r */
-	mov ax, 0x0E72
-	xor bx, bx
-	int 0x10
-	
-	/* o */
-	mov ax, 0x0E6F
-	xor bx, bx
-	int 0x10
-	
-	/* s */
-	mov ax, 0x0E73
-	xor bx, bx
-	int 0x10
-	
-	/* ( */
-	mov ax, 0x0E28
-	xor bx, bx
-	int 0x10
-	
-	/* 1 */
-	mov ax, 0x0E31
-	xor bx, bx
-	int 0x10
-	
-	/*  */
-	mov ax, 0x0E20
-	xor bx, bx
-	int 0x10
-	
-	/* D */
-	mov ax, 0x0E44
-	xor bx, bx
-	int 0x10
-	
-	/* i */
-	mov ax, 0x0E69 
-	xor bx, bx 
-	int 0x10
-	
-	/* g */
-	mov ax, 0x0E67
-	xor bx, bx
-	int 0x10
-	
-	/* i */
-	mov ax, 0x0E69 
-	xor bx, bx 
-	int 0x10
-	
-	/* t */
-	mov ax, 0x0E74
-	xor bx, bx
-	int 0x10
-	
-	/* o */
-	mov ax, 0x0E6f
-	xor bx, bx
-	int 0x10
-	
-	/* ) */
-	mov ax, 0x0E29
-	xor bx, bx
-	int 0x10
-	
-	/* : */
-	mov ax, 0x0E3A
-	mov bx, 0x0000
-	int 0x10
-	
-	
+	/*Leer primer numero*/
 	call getkey
+	/*Guardarlo en bl*/
+	mov bl, al
+	xchg bx, bx
+	
+	/* Leer el segundo numero */
 	call getkey
-	
-	/* Esperar una pulsación de tecla */
-	xor ax, ax /* ax = 0x0000 */
-	int 0x16 /* int 0x16, ah = 0x00 Wait for keystroke and read */
-	
+	/* Guardarlo en bh*/
+	mov bh, al
+        xchg bx, bx
+  
 	/* Salto de linea */
 	mov ah, 0x0E
 	mov al, 0x0D
@@ -284,104 +111,10 @@ cls:
 	
 	/* Imprimir: Un caracter(c,t): */
 	
-	/* U */
-        mov ax, 0x0e55
-        xor bx, bx
-        int 0x10
-        
-        /* n */
-        mov ax, 0x0e6e
-        xor bx, bx
-        int 0x10
-		
-	/*  */
-	mov ax, 0x0E20
-	xor bx, bx
-	int 0x10
+	mov si,offset mensaje2
+	call imprimir
 	
-	/* c*/
-	mov ax, 0x0E63
-	xor bx, bx
-	int 0x10
-	
-	
-	/* a */
-	mov ax, 0x0E61
-	xor bx, bx
-	int 0x10
-	
-	/* r */
-	mov ax, 0x0E72
-	xor bx, bx
-	int 0x10
-	
-	/* a */
-	mov ax, 0x0E61
-	xor bx, bx
-	int 0x10
-	
-	
-	/* c */
-	mov ax, 0x0E63
-	xor bx, bx
-	int 0x10
-	
-      
-	/* t*/
-	mov ax, 0x0E74
-	xor bx, bx
-	int 0x10
-	
-	/* Error */
-      
-	/* e */
-	mov ax, 0x0E65
-	xor bx, bx
-	int 0x10
-	
-	/* r */
-	mov ax, 0x0E72
-	xor bx, bx
-	int 0x10
-	
-	/* ( */
-	mov ax, 0x0E28
-	xor bx, bx
-	int 0x10
-	
-	/* c */
-	mov ax, 0x0E63
-	xor bx, bx
-	int 0x10
-	
-	
-	/* , */
-	mov ax, 0x0E2C
-	xor bx, bx
-	int 0x10
-	
-	/* t */
-	mov ax, 0x0E74
-	xor bx, bx
-	int 0x10
-	
-	/* ) */
-	mov ax, 0x0E29
-	xor bx, bx
-	int 0x10
-	
-	/* : */
-	mov ax, 0x0E3A
-	xor bx, bx
-	int 0x10
-	
-	/*
-	
-	
-	Recibir el caracter
-	
-	
-	*/
+	call getkey
 	
 finished:
 
@@ -407,4 +140,22 @@ finished:
 getkey: 
   xor ah, ah   /* ah = 0, servico de video leer un caracter de teclado */
   int 0x16     /* Servicio de video */
+  sub al, '0'
   ret
+  
+  /* Imprimir una cadena  */
+  imprimir:
+  mov ah, 0x0E
+  imprimir_char:
+  lodsb
+  or al, al
+  jz done_imprimir
+  int 0x10
+  jmp imprimir_char
+  done_imprimir:
+  ret
+  
+  mensaje1:
+  .asciz "Ingrese 2 valores enteros(1 digito):"
+  mensaje2:
+  .asciz "Ingrese un caracter(c,t):"
