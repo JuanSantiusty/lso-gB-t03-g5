@@ -1,24 +1,23 @@
 /**
  * @file bootsect.S
- * @author Juan David Moran
+ * @author Juan David Moran, Andres Felipe Sandino
  * @brief Area de un triangulo y un rectangulo
  * @description 
  * Este codigo limpia pantalla y recibe dos valores enteros, despues se debe ingresar c o t 
  * para calcular el area de un rectangulo y un triangulo respectivamente
 */
 
-.intel_syntax noprefix 
-
-.code16     
-
-.section .text 
-
-.global start                  
+.intel_syntax noprefix
+.code16  # Indica código de 16 bits
+.section .text
+.global _start
+_start:
 
 /**
 * Símbolo que marca el inicio del código del sector de arranque 
 */
-start:
+_start:
+
         /* Configurar CS para que apunte a 0x7C00 */
   ljmp 0x7C0: offset entry_point
   
@@ -91,6 +90,12 @@ cls:
 	
 	/*Leer primer numero*/
 	call getkey
+	cmp al, 'c'
+	je calcular_rectangulo
+	cmp al, 't'
+	je calcular_triangulo
+	jmp finished
+
 	/*Guardarlo en bl*/
 	mov bl, al
 	xchg bx, bx
@@ -115,7 +120,53 @@ cls:
 	call imprimir
 	
 	call getkey
+
+	calcular_rectangulo:
+    	call area_rectangulo
+    	jmp finished
+
+	area_rectangulo:
+    	mov al, bl
+    	mul bh
+    	call imprimir_numero
+    	ret
+
+	imprimir_numero:
+    	pusha
+    	mov cx, 0
+    
+	convertir:
+    	mov dx, 0
+    	mov bx, 10
+    	div bx
+    	add dl, '0'
+    	push dx
+    	inc cx
+    	test ax, ax
+    	jnz convertir
+
+	imprimir_digitos:
+    	pop ax
+    	mov ah, 0x0E
+    	int 0x10
+    	loop imprimir_digitos
+    
+    	popa
+    	ret
 	
+	area_triangulo:
+    	mov al, bl
+    	mul bh
+    	shr ax, 1
+    	call imprimir_numero
+    	ret
+
+	calcular_triangulo:
+    	movzx AX, AL
+    	mul AH
+    	shr AX, 1
+   	ret
+
 finished:
 
    /* Detener el procesador con la instrucción HLT. Si las interrupciones
