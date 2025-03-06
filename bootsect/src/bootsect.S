@@ -121,7 +121,7 @@ cls:
 	call area_rectangulo
 	jmp finished
 	cmp al, 't'
-	call calcular_triangulo
+	call area_triangulo
 	jmp finished
 
 	
@@ -157,6 +157,12 @@ getchar:
   xor ah, ah   /* ah = 0, servico de video leer un caracter de teclado */
   int 0x16     /* Servicio de video */
   ret
+  
+ area_rectangulo:
+    	mov al, bl
+    	mul bh
+    	call imprimir_numero
+    	ret
 
 
 getkey: 
@@ -177,11 +183,7 @@ getkey:
   done_imprimir:
   ret
   
-  area_rectangulo:
-    	mov al, bl
-    	mul bh
-    	call imprimir_numero
-    	ret
+
     	
   imprimir_digitos:
     	pop ax
@@ -192,18 +194,18 @@ getkey:
     	popa
     	ret
 	
+	calcular_triangulo:
+    	movzx AX, AL
+    	mul AH
+    	shr AX, 1
+   	ret
+	
 	area_triangulo:
     	mov al, bl
     	mul bh
     	shr ax, 1
     	call imprimir_numero
     	ret
-
-	calcular_triangulo:
-    	movzx AX, AL
-    	mul AH
-    	shr AX, 1
-   	ret
    	
    	imprimir_numero:
     	pusha
