@@ -90,15 +90,10 @@ cls:
 	
 	/*Leer primer numero*/
 	call getkey
-	cmp al, 'c'
-	je calcular_rectangulo
-	cmp al, 't'
-	je calcular_triangulo
-	jmp finished
-
 	/*Guardarlo en bl*/
 	mov bl, al
 	xchg bx, bx
+	
 	
 	/* Leer el segundo numero */
 	call getkey
@@ -119,21 +114,19 @@ cls:
 	mov si,offset mensaje2
 	call imprimir
 	
-	call getkey
+	/* leer caracter */
+	call getchar
+	
+	cmp al, 'c'
+	call area_rectangulo
+	jmp finished
+	cmp al, 't'
+	call calcular_triangulo
+	jmp finished
 
-	calcular_rectangulo:
-    	call area_rectangulo
-    	jmp finished
+	
 
-	area_rectangulo:
-    	mov al, bl
-    	mul bh
-    	call imprimir_numero
-    	ret
-
-	imprimir_numero:
-    	pusha
-    	mov cx, 0
+	
     
 	convertir:
     	mov dx, 0
@@ -145,7 +138,52 @@ cls:
     	test ax, ax
     	jnz convertir
 
-	imprimir_digitos:
+	
+
+finished:
+
+   /* Detener el procesador con la instrucción HLT. Si las interrupciones
+   se encuentran habilitadas, la BIOS toma el control, atiende la
+   interrupción y continúa justo después de la instrucción HLT. */
+   
+   hlt
+
+
+ jmp finished
+
+
+
+getchar:
+  xor ah, ah   /* ah = 0, servico de video leer un caracter de teclado */
+  int 0x16     /* Servicio de video */
+  ret
+
+
+getkey: 
+  xor ah, ah   /* ah = 0, servico de video leer un caracter de teclado */
+  int 0x16     /* Servicio de video */
+  sub al, '0'
+  ret
+  
+  /* Imprimir una cadena  */
+  imprimir:
+  mov ah, 0x0E
+  imprimir_char:
+  lodsb
+  or al, al
+  jz done_imprimir
+  int 0x10
+  jmp imprimir_char
+  done_imprimir:
+  ret
+  
+  area_rectangulo:
+    	mov al, bl
+    	mul bh
+    	call imprimir_numero
+    	ret
+    	
+  imprimir_digitos:
     	pop ax
     	mov ah, 0x0E
     	int 0x10
@@ -166,45 +204,11 @@ cls:
     	mul AH
     	shr AX, 1
    	ret
-
-finished:
-
-   /* Detener el procesador con la instrucción HLT. Si las interrupciones
-   se encuentran habilitadas, la BIOS toma el control, atiende la
-   interrupción y continúa justo después de la instrucción HLT. */
-   
-   hlt
-
-
- jmp finished
-
-/**
-* Lee un caracter de teclado usando los servicios de teclado de la BIOS
-* (int 0x16).
-* Entrada:
-*  Ninguna
-* Salida:
-*  AL contiene el caracter ASCII leido
-* En esta rutina no se crea un marco de pila. El servicio de la 
-* BIOS puede modificar otros registros.
-*/
-getkey: 
-  xor ah, ah   /* ah = 0, servico de video leer un caracter de teclado */
-  int 0x16     /* Servicio de video */
-  sub al, '0'
-  ret
-  
-  /* Imprimir una cadena  */
-  imprimir:
-  mov ah, 0x0E
-  imprimir_char:
-  lodsb
-  or al, al
-  jz done_imprimir
-  int 0x10
-  jmp imprimir_char
-  done_imprimir:
-  ret
+   	
+   	imprimir_numero:
+    	pusha
+    	mov cx, 0
+    	ret
   
   mensaje1:
   .asciz "Ingrese 2 valores enteros(1 digito):"
